@@ -18,14 +18,17 @@ class UserDatabase {
         return this.database;
     }
 
-    getUserData(username: string): UserInfoSchema {
-        return this.database.find(user => user.username === username)!
+    getUserData(username: string): UserInfoSchema | undefined {
+        return this.database.find((user) => user.username === username);
     }
 
     exists(username: string, password: string) {
-        return this.database.find(
-            (user) => user.username === username && user.password === password
-        ) !== undefined;
+        return (
+            this.database.find(
+                (user) =>
+                    user.username === username && user.password === password
+            ) !== undefined
+        );
     }
 }
 

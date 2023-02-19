@@ -13,7 +13,7 @@ const LogoutHandler = async (req: any, res: any) => {
             return res.status(400).send('Invalid user token');
         }
         const userData = userDatabase.getUserData((data as any).username as string)
-        console.log(`${userData.name}(${userData.username}) Logged Out`)
+        console.log(`${userData?.name}(${userData?.username}) Logged Out`)
         refreshTokenDatabase.delete(refreshToken)
         res.clearCookie('refreshToken');
         res.status(200).send(

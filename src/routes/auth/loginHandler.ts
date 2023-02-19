@@ -15,7 +15,7 @@ const LoginHandler = async (req: any, res: any) => {
     }
 
     const userData = userDatabase.getUserData(username);
-    console.log(`${userData.name}(${userData.username}) Logged In`)
+    console.log(`${userData?.name}(${userData?.username}) Logged In`)
     const refreshToken = generateRefreshToken(username);
     const accessToken = generateAccessToken(username);
     refreshTokenDatabase.push(refreshToken);
