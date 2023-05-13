@@ -1,57 +1,62 @@
-import { CreateUserType } from '../types/auth.type';
-import { UserInfoSchema } from './schema';
+import { MongoClient, ServerApiVersion } from "mongodb";
+import { CreateUserType } from "../types/auth.type";
 
-class UserDatabase {
-    database: UserInfoSchema[];
-    constructor() {
-        this.database = [];
-    }
+const MONGO_URI: string = process.env.MONGO_URI as string;
 
-    createUser(user: CreateUserType) {
-        this.database.push({
-            ...user,
-            id: this.database.length,
-        });
-    }
+const client = new MongoClient(MONGO_URI, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    },
+});
 
-    getAllUsers() {
-        return this.database;
-    }
+client.connect();
+const db = client.db(process.env.DATABASE_NAME as string);
+const userCollection = db.collection(process.env.USER_COLLECTION as string);
+const tokenCollection = db.collection(process.env.TOKEN_COLLECTION as string);
+tokenCollection.createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
-    getUserData(username: string): UserInfoSchema | undefined {
-        return this.database.find((user) => user.username === username);
-    }
+export const createUser = async (user: CreateUserType) => {
+    userCollection.insertOne(user);
+};
 
-    exists(username: string, password: string) {
-        return (
-            this.database.find(
-                (user) =>
-                    user.username === username && user.password === password
-            ) !== undefined
-        );
-    }
-}
+export const getAllUsers = async () => {
+    return await userCollection.find().toArray();
+};
 
-class RefreshTokenDatabase {
-    database: string[];
-    constructor() {
-        this.database = [];
-    }
+export const getUserData = async (username: string) => {
+    return await userCollection.findOne({
+        username,
+    });
+};
 
-    isValid(refreshToken: string) {
-        return (
-            this.database.find((token) => token == refreshToken) !== undefined
-        );
-    }
+export const isValidUser = async (username: string, password: string) => {
+    return (
+        (await userCollection.findOne({
+            username,
+            password,
+        })) !== null
+    );
+};
 
-    push(refreshToken: string) {
-        this.database.push(refreshToken);
-    }
+export const isValidToken = async (token: string) => {
+    return (await tokenCollection.findOne({ token })) !== null;
+};
 
-    delete(refreshToken: string) {
-        this.database = this.database.filter((token) => token !== refreshToken);
-    }
-}
+export const insertToken = async (token: string, expireAt: Date) => {
+    return await tokenCollection.insertOne({
+        token,
+        expireAt,
+    });
+};
 
-export const refreshTokenDatabase = new RefreshTokenDatabase();
-export const userDatabase = new UserDatabase();
+export const deleteToken = async (token: string) => {
+    return await tokenCollection.deleteOne({ token });
+};
+
+export const deleteAllToken = async () => {
+    await tokenCollection.deleteMany();
+};
+
+// deleteAllToken()

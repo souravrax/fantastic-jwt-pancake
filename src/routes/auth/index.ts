@@ -1,3 +1,3 @@
-import AuthRouter from './auth.routes'
-export * from './tokenService';
-export default AuthRouter
+import AuthRouter from "./auth.routes";
+export * from "./tokenService";
+export default AuthRouter;

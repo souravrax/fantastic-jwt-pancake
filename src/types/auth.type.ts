@@ -7,6 +7,6 @@ export type CreateUserType = {
     name: string;
     username: string;
     password: string;
-    roles?: [],
-    products?: [],
-}
+    roles?: [];
+    products?: [];
+};
