@@ -9,7 +9,10 @@ import PostsRouter from './routes/posts'
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+    origin: process.env.WEBSITE_URL,
+    credentials: true
+}));
 
 app.use('/auth', AuthRouter);
 app.use('/posts', PostsRouter);
