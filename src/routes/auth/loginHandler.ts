@@ -38,6 +38,7 @@ const LoginHandler = async (req: any, res: any) => {
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         expires: expireAt,
+        sameSite: "none",
     });
     res.status(200).json({
         status_code: 200,
