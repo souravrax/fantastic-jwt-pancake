@@ -19,7 +19,10 @@ const LogoutHandler = async (req: any, res: any) => {
         return res.status(StatusCodes.BAD_REQUEST).json(invalidTokenData);
     }
 
-    res.clearCookie("refreshToken");
+    res.clearCookie("refreshToken", {
+        sameSite: "none",
+        secure: true,
+    });
     jwt.verify(refreshToken, refreshTokenSecret, async (err, data) => {
         if (err || !(await isValidToken(refreshToken))) {
             return res.status(StatusCodes.BAD_REQUEST).json(invalidTokenData);
