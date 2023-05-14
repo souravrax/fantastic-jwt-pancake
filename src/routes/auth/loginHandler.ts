@@ -39,6 +39,7 @@ const LoginHandler = async (req: any, res: any) => {
         httpOnly: true,
         expires: expireAt,
         sameSite: "none",
+        secure: true,
     });
     res.status(200).json({
         status_code: 200,
