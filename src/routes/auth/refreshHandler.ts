@@ -18,7 +18,8 @@ const RefreshHandler = async (req: any, res: any) => {
     jwt.verify(refreshToken, refreshTokenSecret, (err, data) => {
         if (err) return res.status(401).json(invalidTokenData);
         res.status(200).json({
-            accessToken: generateAccessToken((data as any).username),
+            status_code: StatusCodes.OK,
+            access_token: generateAccessToken((data as any).username),
         });
     });
 };
